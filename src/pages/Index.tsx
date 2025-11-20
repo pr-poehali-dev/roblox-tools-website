@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
@@ -8,6 +9,25 @@ import Icon from '@/components/ui/icon';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('voice');
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('session_token');
+    const email = localStorage.getItem('user_email');
+    
+    if (!token) {
+      navigate('/login');
+    } else {
+      setUserEmail(email);
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('session_token');
+    localStorage.removeItem('user_email');
+    navigate('/login');
+  };
 
   const services = [
     {
@@ -35,6 +55,20 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-5xl">
+        <div className="flex justify-end mb-4">
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-muted-foreground">{userEmail}</span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleLogout}
+              className="border-border hover:bg-card"
+            >
+              <Icon name="LogOut" size={16} className="mr-2" />
+              Выйти
+            </Button>
+          </div>
+        </div>
         <div className="mb-12 text-center animate-fade-in">
           <h1 className="text-4xl md:text-5xl font-bold mb-3 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
             Roblox Services

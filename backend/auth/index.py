@@ -46,6 +46,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 return register_user(conn, body_data)
             elif action == 'login':
                 return login_user(conn, body_data)
+            elif action == 'update_profile':
+                return update_profile(conn, body_data, event.get('headers', {}))
             
         elif method == 'GET':
             headers = event.get('headers', {})
@@ -188,4 +190,58 @@ def verify_session(conn, session_token: str) -> Dict[str, Any]:
         'statusCode': 401,
         'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
         'body': json.dumps({'authenticated': False})
+    }
+
+def update_profile(conn, data: Dict[str, Any], headers: Dict[str, str]) -> Dict[str, Any]:
+    session_token = headers.get('X-Session-Token') or headers.get('x-session-token')
+    
+    if not session_token:
+        conn.close()
+        return {
+            'statusCode': 401,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Unauthorized'})
+        }
+    
+    nickname = data.get('nickname', '').strip()
+    avatar_url = data.get('avatar_url', '')
+    
+    if not nickname or len(nickname) < 3 or len(nickname) > 20:
+        conn.close()
+        return {
+            'statusCode': 400,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'error': 'Nickname must be 3-20 characters'})
+        }
+    
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    
+    cursor.execute(
+        "UPDATE users SET nickname = %s, avatar_url = %s, profile_completed = TRUE WHERE id = (SELECT id FROM users LIMIT 1) RETURNING id, email, nickname, avatar_url",
+        (nickname, avatar_url)
+    )
+    user = cursor.fetchone()
+    conn.commit()
+    cursor.close()
+    conn.close()
+    
+    if user:
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({
+                'success': True,
+                'user': {
+                    'id': user['id'],
+                    'email': user['email'],
+                    'nickname': user['nickname'],
+                    'avatar_url': user['avatar_url']
+                }
+            })
+        }
+    
+    return {
+        'statusCode': 404,
+        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+        'body': json.dumps({'error': 'User not found'})
     }

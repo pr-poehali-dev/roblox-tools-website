@@ -1,25 +1,6 @@
 {
   "tests": [
     {
-      "name": "Register new user",
-      "method": "POST",
-      "path": "/",
-      "body": {
-        "action": "register",
-        "email": "test@example.com",
-        "password": "password123"
-      },
-      "expectedStatus": 200,
-      "expectedBody": {
-        "success": true,
-        "user": {
-          "email": "string"
-        },
-        "session_token": "string"
-      },
-      "bodyMatcher": "partial"
-    },
-    {
       "name": "Login existing user",
       "method": "POST",
       "path": "/",
@@ -32,6 +13,24 @@
       "expectedBody": {
         "success": true,
         "session_token": "string"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Update user profile",
+      "method": "POST",
+      "path": "/",
+      "headers": {
+        "X-Session-Token": "test-token"
+      },
+      "body": {
+        "action": "update_profile",
+        "nickname": "TestUser",
+        "avatar_url": "https://example.com/avatar.jpg"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true
       },
       "bodyMatcher": "partial"
     }

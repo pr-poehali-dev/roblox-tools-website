@@ -57,9 +57,9 @@ const Register = () => {
         localStorage.setItem('user_email', data.user.email);
         toast({
           title: 'Регистрация успешна!',
-          description: 'Добро пожаловать!',
+          description: 'Настрой свой профиль!',
         });
-        navigate('/');
+        navigate('/profile');
       } else {
         toast({
           title: 'Ошибка регистрации',

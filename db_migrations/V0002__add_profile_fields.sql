@@ -1,0 +1,4 @@
+ALTER TABLE users 
+ADD COLUMN nickname VARCHAR(50),
+ADD COLUMN avatar_url TEXT,
+ADD COLUMN profile_completed BOOLEAN DEFAULT FALSE;

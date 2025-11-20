@@ -96,19 +96,6 @@ const Index = () => {
                   <h3 className="text-lg font-semibold mb-4">Вставляй это сюда</h3>
                   <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                     <div>
-                      <Input
-                        placeholder="Ваше имя"
-                        className="bg-background border-border"
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        type="email"
-                        placeholder="Email"
-                        className="bg-background border-border"
-                      />
-                    </div>
-                    <div>
                       <Textarea
                         placeholder="Ваше сообщение"
                         className="bg-background border-border min-h-[100px]"

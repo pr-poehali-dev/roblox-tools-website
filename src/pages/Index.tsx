@@ -93,7 +93,7 @@ const Index = () => {
                 </div>
 
                 <div className="border-t border-border pt-8">
-                  <h3 className="text-lg font-semibold mb-4">Обратная связь</h3>
+                  <h3 className="text-lg font-semibold mb-4">Вставляй это сюда</h3>
                   <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                     <div>
                       <Input
